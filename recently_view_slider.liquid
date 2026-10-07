@@ -1,0 +1,342 @@
+{% comment %} valektro v 2.0 {% endcomment %}
+{% assign mod_recently_view_count = settings.recently_numbers %}
+{% if settings.recently_type_arrow == "круглые" %}
+  {% assign recently_left_button_slider = "fa-arrow-circle-left" %}
+  {% assign recently_right_button_slider = "fa-arrow-circle-right" %}
+{% endif %}
+{% if settings.recently_type_arrow == "квадратные" %}
+  {% assign recently_left_button_slider = "fa-caret-square-o-left" %}
+  {% assign recently_right_button_slider = "fa-caret-square-o-right" %}
+{% endif %}
+{% if settings.recently_type_arrow == "стрелки" %}
+  {% assign recently_left_button_slider = "fa-arrow-left" %}
+  {% assign recently_right_button_slider = "fa-arrow-right" %}
+{% endif %}
+<style>
+  .transition{transition: max-width 1s ease 0s,
+max-height 1s ease 0s}
+#recently_main_title{
+  text-align:center;
+  padding-bottom:10px;
+  padding-top:10px;
+  display:none;  
+}
+  .buyzone{margin-top:4px;}
+.hr-line{
+  margin-block-start:0px;
+  margin-block-end: 0px;
+  border: 0;
+  height: 1px;
+  background:#993333;
+  background-image: -webkit-linear-gradient(left, #fff, #993333, #fff);
+  background-image: -moz-linear-gradient(left, #fff, #993333, #fff);
+  background-image: -ms-linear-gradient(left, #fff, #993333, #fff);
+  background-image: -o-linear-gradient(left, #fff, #993333, #fff);
+}
+#mod-recently-view{  
+  display: -webkit-flex; 
+  display: flex; 
+  justify-content:flex-start; 
+  flex-wrap: nowrap;
+}
+.recently_title{
+  text-decoration:none;
+  color:black;
+  line-height: 1.5rem;
+ }
+.product_cart_recently{
+  width:178px;
+  font-size: 13px;
+  line-height: 1.5;
+  margin-left:5px; 
+  margin-right:5px;
+  padding:2px;
+  overflow:hidden;
+  text-align:center;
+  margin-top:5px;
+  margin-bottom:5px;
+  border: 1px solid white;
+}
+.product_cart_recently:hover{
+  border: 1px solid white
+ 
+}
+#recently_view{width:100%;
+ display:none;
+}
+.block_img{
+  margin:auto;  
+  width:178px;  
+  height:280px; 
+  display: -webkit-flex;
+  display: flex; 
+  align-items: center;
+  overflow:hidden;
+  justify-content:center;
+}    
+.inner_img{
+  height: auto;
+  width: 100%;
+}
+  .inner_img:hover{max-width:220px!important;max-height:320px!important}
+#width_block{
+  overflow:hidden;
+  margin-top:10px; 
+  width:1134px;
+ } 
+@media(min-width:1200px){
+   #width_block{   
+     width:1134px;
+   } 
+}
+@media(max-width:1199px){
+   #width_block{   
+     width:945px;
+   } 
+}  
+@media(max-width:1000px){
+   #width_block{   
+     width:756px;
+   } 
+}    
+@media(max-width:800px){
+   #width_block{   
+     width:567px;
+   } 
+}  
+@media(max-width:600px){
+   #width_block{   
+     width:378px;
+   } 
+}  
+@media(max-width:400px){
+   #width_block{   
+     width:189px;
+   } 
+}    
+#left_button_slider_recently{
+  cursor:pointer;
+  z-index:8;
+  opacity:0.2;
+}
+#right_button_slider_recently{
+  cursor:pointer;
+  z-index:8;
+}
+
+.buttons_control_recently{
+  font-size:24px;padding:15px;cursor:pointer;opacity:0.7; transition: 1s;
+}
+.buttons_control_recently:hover{
+  opacity:1;
+}
+</style>
+<script type="text/javascript">
+  var members_on_screen;
+  var card_width = 189;
+  var progress_animations=false;
+  var members;
+  $('#recently_view').hide();
+  
+  function saveProduct(pid) {
+    if ($.cookie('product_ids') != null) {
+      var arr = $.cookie('product_ids').split(',');
+      for (var i = 0; i < arr.length; i++) {
+        if (arr[i] == pid) {
+           return;
+        }
+      }
+      if (arr.length >= {{ settings.recently_numbers }}) {
+        arr.shift();
+      }
+      arr.push(pid);
+      $.cookie('product_ids', arr, {
+        path: '/'
+      });
+    } else {
+       $.cookie('product_ids', pid, {
+         path: '/'
+      });
+    }
+  }
+  
+  $(function() {   
+    if($.cookie('product_ids') != null) {
+      $('#recently_view').show();
+      $.getJSON("/products_by_id/"+$.cookie('product_ids')+".json",
+        function(data){
+          var products = '';
+          window.members = data.products.length;
+          if (members_on_screen>=window.members) {
+            
+             $('#left_button_slider_recently').hide();
+            $('#right_button_slider_recently').hide();
+            $('#mod-recently-view').css('justifyContent', 'center');
+            $('#mod-recently-view').css('marginLeft', '0px');}
+          else {
+            $('#button_slider_recently').show();
+            $('#mod-recently-view').css('justifyContent', 'flex-start')
+          }
+    
+          $.each(data.products, function(i,product){
+            if (product.permalink != 'shop-reviews'){
+              if (i<={{settings.recently_numbers}}){
+                if (product.images.length > 0) { 
+                recently_main_title.style.display="block";
+
+                {% if settings.optimization %} 
+                   products +=  '<a style="order:'+(-i)+';text-decoration:none;color:black;" href="/product/?product_id=' + product.id + '" ><div class="product_cart_recently"><div class="block_img"  ><img style="width:unset;max-height: 300px;max-width: 180px;opacity:0" class="inner_img transition lazy"   src="{{'empty.jpg' | asset_url}}" data-src="'+ product.images[0].large_url +'" alt="'+ product.title +'" ></div>';
+                {% else %}
+                   products +=  '<a style="text-decoration:none;color:black;" href="/product/?product_id=' + product.id + '" ><div class="product_cart_recently"><div class="block_img"  ><img style="width:unset;max-height:300px;max-width:180px" class="inner_img transition" src="'+ product.images[0].large_url +'" alt="'+ product.title +'" ></div>';
+                {% endif %}
+
+                 products +=  '<div class="buyzone">  {% if settings.hide_price and client != true %}{% else %}<p class="price">'+ InSales.formatMoney(product.variants[0].base_price, "{{money_with_currency_format}}") + '</p>{% endif %}';
+
+
+                  {% comment %} прошлая цена  
+                if (product.variants[0].old_price != null) { 
+                  products += '<p class="old-price">' + InSales.formatMoney(product.variants[0].old_price, "{{money_with_currency_format}}")+'</p>';
+                }
+                   {% endcomment %}
+                  products += '<center>'+ product.title +'</center>';
+
+                products += '</div></div></a>';
+               } 
+             }
+           }
+          });  
+          $('#mod-recently-view').html(products);
+        });
+    
+    }
+                
+    {% if template == 'product' %}   
+     {% unless product.handle == 'shop-reviews' %}
+      saveProduct({{product.id}});
+     {% endunless %}
+    
+    {% endif %}
+   
+    function configuration_module(){
+      var width_screen = document.body.clientWidth;
+      if (width_screen >= 1200){
+         members_on_screen=6;       
+      }      
+      if (width_screen <= 1199){
+         members_on_screen=5;       
+      }   
+       if (width_screen <= 1000){
+         members_on_screen=4;       
+      }   
+       if (width_screen <= 800){
+         members_on_screen=3;       
+      }   
+       if (width_screen <= 600){
+         members_on_screen=2;       
+      }   
+       if (width_screen <= 400){
+         members_on_screen=1;       
+      }   
+      if (members_on_screen>=window.members) {
+            
+            $('#left_button_slider_recently').hide();
+            $('#right_button_slider_recently').hide();
+            $('#mod-recently-view').css('justifyContent', 'center');
+            $('#mod-recently-view').css('marginLeft', '0px');
+      
+      }
+          else {
+            $('#left_button_slider_recently').show();
+            $('#right_button_slider_recently').show();
+           
+            $('#mod-recently-view').css('justifyContent', 'flex-start')
+     }                      
+    }
+  
+  configuration_module();
+    $(window).resize(function(){configuration_module()});           
+  });   
+         
+</script>    
+
+<div  style="padding-bottom:10px; background-color:unset; "id="recently_view">
+<div style="margin:auto;background:white">
+<hr class="" style="margin-top:10px; margin-bottom:10px">  
+  <div style="display:flex;justify-content:center;align-items:center">
+      <div id='left_button_slider_recently'  onClick="
+    var block_goods=document.getElementById('mod-recently-view'); 
+      if ((Math.round(parseFloat(block_goods.style.marginLeft))<=-189)&&(progress_animations==false)){
+        progress_animations = true;
+        right_button_slider_recently.style.opacity='1'
+        $('#mod-recently-view').animate({        
+          marginLeft: '+=189',         
+        }, {
+          duration: 400,
+          complete: function() {
+            progress_animations = false;
+             // делаем кнопку полупрозрачной, если она неактивна
+            if (Math.round(parseFloat(block_goods.style.marginLeft))>-189) {
+              left_button_slider_recently.style.opacity='0.2'} 
+            else {
+              left_button_slider_recently.style.opacity='1'};                         
+          }            
+        });
+    }   ">
+       
+           {% if settings.recently_type_arrow  == "свои кнопки" %}
+             <img class="buttons_control_recently" src="{{'recently_left_button.png' | asset_url}}"  style="height: 50px; width: auto; padding: 0px;" >
+           {% else %}        
+              <i class="buttons_control_recently fa {{recently_left_button_slider}}" aria-hidden="true"></i> 
+           {% endif %}  
+              
+    </div>
+    
+    <span  id="recently_main_title" style="display:none;color: {{settings.recently_color}};
+      font-weight: bold;
+      font-size: 1.25rem;">{{settings.recently_view_title}}
+    </span>
+    
+     <div id='right_button_slider_recently' onClick="
+       var block_goods=document.getElementById('mod-recently-view');
+       if ((Math.round(parseFloat(block_goods.style.marginLeft))>=((members-members_on_screen-1)*-189))&&(progress_animations==false)) {
+         progress_animations=true;
+         left_button_slider_recently.style.opacity='1'
+         $('#mod-recently-view').animate({        
+           marginLeft: '-=189',         
+         }, {
+         duration: 400,
+         complete: function() {
+           progress_animations=false;
+           if (Math.round(parseFloat(block_goods.style.marginLeft))<((members-members_on_screen-1)*-189)){
+             right_button_slider_recently.style.opacity='0.2';
+          } 
+            else {
+             right_button_slider_recently.style.opacity='1'};    
+         }
+        });                                                                                          
+      }   ">
+       
+          {% if settings.recently_type_arrow  == "свои кнопки" %}
+             <img class="buttons_control_recently" src="{{'recently_right_button.png' | asset_url}}"  style="height: 50px; width: auto; padding: 0px;" >
+           {% else %}        
+              <i class="buttons_control_recently fa {{recently_right_button_slider}}" aria-hidden="true"></i> 
+           {% endif %}  
+       
+      
+    </div>
+          
+    
+  </div>
+    
+  <center style="position:relative">
+          
+
+
+    
+        <div id='width_block'>
+          <div id="mod-recently-view" style="margin-left:0px;">	
+          </div>
+        </div>
+      </center>  
+     </div>
+    </div>
