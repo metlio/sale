@@ -20,45 +20,42 @@
 $item-gutter-vertical: 0.5rem;
 $item-gutter-horizontal: 0.5rem;
 
+.cart-item {
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+  background-color: #fff;
+  border: 1px solid lighten($color-border-primary, 5%);
+  border-radius: 8px;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  padding: 0.5rem;
+
+  &:hover {
+    border-color: darken($color-border-primary, 10%);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+}
+
 .item {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  margin-left: -$item-gutter-horizontal;
-  margin-right: -$item-gutter-horizontal;
-  margin-top: -$item-gutter-vertical;
-  margin-bottom: -$item-gutter-vertical;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-  -ms-flex-direction: row;
   flex-direction: row;
-  -ms-flex-wrap: nowrap;
   flex-wrap: nowrap;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
   align-items: center;
-  border-top: 1px solid $color-border-primary;
 
   @include media-max(md) {
-    -ms-flex-wrap: wrap;
     flex-wrap: wrap;
-    -webkit-box-pack: end;
-    -ms-flex-pack: end;
     justify-content: flex-end;
   }
 }
 
 .item-image-wrapper {
-  -webkit-box-flex: 0;
-  -ms-flex: 0 0 10rem;
-  flex: 0 0 10rem;
+  flex: 0 0 7rem;
   padding: $item-gutter-vertical $item-gutter-horizontal;
-  margin: auto;
+  margin: 0;
+  text-align: center;
 
   @include media-max(xs) {
-    -webkit-box-flex: 0;
-    -ms-flex: 0 0 80%;
     flex: 0 0 80%;
+    margin: auto;
   }
 }
 
@@ -141,10 +138,30 @@ $item-gutter-horizontal: 0.5rem;
 
 .cart-body {
   border-bottom: 1px solid $color-border-primary;
-  margin-bottom: 0.75rem;
-  padding-bottom: 0.5rem;
-  padding-left: 5rem;
-  padding-right: 5rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.cart-header {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background-color: lighten($color-background-secondary, 3%);
+  border-bottom: 2px solid $color-border-primary;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  color: lighten($color-text-primary, 20%);
+  margin-bottom: 0.5rem;
+
+  .item-image-col { flex: 0 0 7rem; text-align: center; }
+  .item-info-col { flex: 1 1 30%; padding-left: 0.5rem; }
+  .item-price-col { flex: 0 0 15%; text-align: center; }
+  .item-qty-col { flex: 0 0 120px; text-align: center; }
+  .item-total-col { flex: 0 0 15%; text-align: center; }
+  .item-action-col { flex: 0 0 2.5rem; }
 }
 
 .item-title {

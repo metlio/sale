@@ -3,3 +3,22 @@
   justify-content: center;
   max-width: 100%;
 }
+
+/* General design improvements */
+.button, .co-button {
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+.notice {
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+}
+
+.modal, .fancybox-content {
+  border-radius: 8px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+}

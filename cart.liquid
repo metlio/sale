@@ -3,6 +3,14 @@
   <form action="{{ cart_items }}" method="post" class="shopping-cart" data-cart-form>
  
     <div class="cart-body">
+      <div class="cart-header hidden-sm">
+        <div class="cart-header-item item-image-col">Товар</div>
+        <div class="cart-header-item item-info-col"></div>
+        <div class="cart-header-item item-price-col">Цена</div>
+        <div class="cart-header-item item-qty-col">Количество</div>
+        <div class="cart-header-item item-total-col">Итого</div>
+        <div class="cart-header-item item-action-col"></div>
+      </div>
       <div class="cart-list">
         {% for item in cart.items %}
 
