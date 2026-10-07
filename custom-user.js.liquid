@@ -1,0 +1,20 @@
+if (location.pathname == "/new_order") {
+  delivery_variants.onclick = function() {
+
+    setTimeout(function () {
+      if ($("input#order_delivery_variant_id_1429810").attr('checked') == "checked") {
+        $("#shipping_address_address").val($("#delivery_description_1429810").val())
+      }
+    }, 100);
+  };
+};
+
+/*
+if (location.pathname == "/new_order") {
+  $(document).ready(function(){ 
+    {% if first_time_loading_page %}     
+      $("#shipping_address_zip").val("");
+    {% endif %}
+  });
+};
+*/
