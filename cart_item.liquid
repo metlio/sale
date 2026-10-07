@@ -37,10 +37,9 @@
       </div>
 
       <div class="item-delete">
-        <button type="submit" class="button is-item-delete is-transparent" data-item-delete="{{ item.id }}">
-
+        <button type="submit" class="button is-item-delete is-transparent" data-item-delete="{{ item.id }}" title="{{ messages.button_remove | default: 'Удалить' }}" aria-label="{{ messages.button_remove | default: 'Удалить' }}">
         </button>
-        </div>
+      </div>
 
     </div>
   </div>
