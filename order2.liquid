@@ -1,0 +1,169 @@
+{% content_for 'title' %}
+Заказ № {{ order.number }}
+{% end_content_for %}
+<div class='co-section--content'>
+  <div class='co-checkout-block--padded'>
+    {% if order.enable_my_orders_app_link? %}
+    <div class='co-title co-title--h2'>Отследить в приложении</div>
+    <div class='co-order-block'>
+      <div class='co-order-information_row'>
+          <a href="https://play.google.com/store/apps/details?id=com.insales.myorders" target="_blank" rel="noopener">
+            <div class="subscribe_my_orders_app android"></div>
+          </a>
+          <a href="https://apps.apple.com/us/app/мои-заказы-отследить-заказы/id1540956481" target="_blank" rel="noopener">
+            <div class="subscribe_my_orders_app ios"></div>
+          </a>
+      </div>
+    </div>
+    {% endif %}
+    <div class='co-title co-title--h2'>Информация о заказе</div>
+<div class="co-order-information_row" style="margin: 1rem 0 0; padding: 1rem; background: #ddf4be; color: #4F8A10; line-height: 1.5; border-radius: 5px;">Благодарим Вас за заказ! <br> На Вашу почту отправлено письмо с информацией о заказе.</div>
+
+<div class='co-order-information'>
+      <div class='co-order-information_row'>
+        <div class='co-order-information_title'>Дата оформления</div>
+        <div class='co-order-information_value'>{{ order.created_at | date: '%d.%m.%Y %H:%M' }}</div>
+      </div>
+      <div class='co-order-information_row'>
+        <div class='co-order-information_title'>Сумма и статус</div>
+        <div class='co-order-information_value'>
+          <span class='co-price'>{{ order.total_price | money }}</span>
+          <span class='co-order-state'>{{ order.customer_status }}</span>
+          {% if order.paid? %}
+          <span class='co-order-state co-order-state--paid'>Оплачен</span>
+          {% else %}
+          <span class='co-order-state co-order-state--not_paid'>Не оплачен</span>
+          {% if order.payment_needed? %}
+          <a class="co-button co-button--small" href="{{ order.pay_url }}">{% if order.paid_with_bank_bill? %}Перейти к оплате (распечатать квитанцию){% else %}Перейти к оплате{% endif %}</a>
+          {% endif %}
+          {% endif %}
+        </div>
+      </div>
+      {% if order.can_notify_client? and order.client.messengers.show_subscription_section? %}
+      {% if order.client.messengers.show_subscription_section_only_on_desktop? %}
+      {% assign notifications_section_class = 'co-social_login--desktop_only' %}
+      {% elsif order.client.messengers.show_subscription_section_only_on_mobile? %}
+      {% assign notifications_section_class = 'co-social_login--mobile_only' %}
+      {% else %}
+      {% assign notifications_section_class = '' %}
+      {% endif %}
+      <div id='messengers_notifications' class="co-order-information_row {{ notifications_section_class }}">
+        <div class='co-order-information_title'>Получать уведомления в мессенджерах</div>
+        <div class='co-order-information_value'>
+          {% include "system_messengers_notification_v2" %}
+        </div>
+      </div>
+      {% endif %}
+      <div class='co-order-information_row'>
+        <div class='co-order-information_title'>Способ оплаты</div>
+        <div class='co-order-information_value'>{{ order.payment_title }}</div>
+      </div>
+      {% if order.payment_description != blank %}
+      <div class='co-order-information_row'>
+        <div class='co-order-information_title'></div>
+        <div class='co-order-information_value'>{{ order.payment_description | strip_html }}</div>
+      </div>
+      {% endif %}
+      <div class='co-order-information_row'>
+        <div class='co-order-information_title'>Способ доставки</div>
+        <div class='co-order-information_value'>{{ order.delivery_description_with_tariff | strip_html }}</div>
+      </div>
+      {% if order.delivery_info.outlet.address != blank %}
+      <div class='co-order-information_row'>
+        <div class='co-order-information_title'>Адрес точки самовывоза</div>
+        <div class='co-order-information_value'>
+          <a href="{{order.delivery_info.outlet.address | address_to_map_url }}" target='_blank' title='Map'>{{ order.delivery_info.outlet.address }}</a>
+        </div>
+      </div>
+      {% if order.delivery_info.outlet.description != blank %}
+      <div class='co-order-information_row'>
+        <div class='co-order-information_title'></div>
+        <div class='co-order-information_value'>{{ order.delivery_info.outlet.description | strip_html }}</div>
+      </div>
+      {% endif %}
+      {% else %}
+      <div class='co-order-information_row'>
+        <div class='co-order-information_title'>Адрес доставки</div>
+        <div class='co-order-information_value'>{{ order.shipping_address.full_delivery_address }}</div>
+      </div>
+      {% endif %}
+      {% if order.delivery_date != blank %}
+      <div class='co-order-information_row'>
+        <div class='co-order-information_title'>Дата доставки</div>
+        <div class='co-order-information_value'>{{ order.delivery_date | date: "%d.%m.%Y" }}</div>
+      </div>
+      {% endif %}
+      <div class='co-order-information_row'>
+        <div class='co-order-information_title'>Получатель</div>
+        <div class='co-order-information_value'>{{ order.shipping_address.full_name }} {{ order.shipping_address.phone }}</div>
+      </div>
+      {% if order.client.email != blank %}
+      <div class='co-order-information_row'>
+        <div class='co-order-information_title'>E-mail</div>
+        <div class='co-order-information_value'>{{ order.client.email }}</div>
+      </div>
+      {% endif %}
+      {% if order.comment != blank %}
+      <div class='co-order-information_row'>
+        <div class='co-order-information_title'>Комментарии к заказу</div>
+        <div class='co-order-information_value'>{{ order.comment | strip_html | newline_to_br }}</div>
+      </div>
+      {% endif %}
+      {% for field in order.result_fields %}
+      {% if field.value != blank %}
+      <div class='co-order-information_row'>
+        <div class='co-order-information_title'>{{ field.client_title }}</div>
+        <div class='co-order-information_value'>
+          {% if field.is_file? %}
+          <a target="_blank" href="{{ field.value }}">{{ field.file_name }}</a>
+          {% else %}
+          {{ field.value }}
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+    <div class='co-title co-title--h2'>Состав заказа</div>
+    <table class='co-table co-table--to_card'>
+      <tr class='co-table-row co-table-row--head'>
+        <td class='co-table-cell co-table-cell--head'>Наименование</td>
+        <td class='co-table-cell co-table-cell--head'>Кол-во</td>
+        <td class='co-table-cell co-table-cell--head'>Стоимость</td>
+      </tr>
+      {% for item in order.items %}
+      <tr class='co-table-row co-table-row--body co-table-row--striped'>
+        <td class='co-table-cell co-table-cell--body' data-title="Наименование">{{ item.title }}</td>
+        <td class='co-table-cell co-table-cell--body' data-title="Кол-во">{{ item.quantity}}</td>
+        <td class='co-table-cell co-table-cell--body' data-title="Стоимость">{{ item.total_price.with_margin | money }}</td>
+      </tr>
+      {% endfor %}
+      {% for discount in order.discounts %}
+      <tr class='co-table-row co-table-row--body co-table-row--striped'>
+        <td class='co-table-cell co-table-cell--body co-table-cell--hide@xs'>
+          {{ discount.description }}
+        </td>
+        <td class='co-table-cell co-table-cell--body' colspan="2" data-title="{{ discount.description }}" >-{{ discount.amount.with_margin | money }}</td>
+      </tr>
+      {% endfor %}
+      {% unless order.delivery_price == 0 %}
+      <tr class='co-table-row co-table-row--body co-table-row--striped'>
+        <td class='co-table-cell co-table-cell--body co-table-cell--hide@xs'>Доставка</td>
+        <td class='co-table-cell co-table-cell--body' colspan="2" data-title="Доставка">{{ order.delivery_price.with_margin | money }}</td>
+      </tr>
+      {% endunless %}
+      {% unless order.margin_amount == 0 %}
+      <tr class='co-table-row co-table-row--body co-table-row--striped'>
+        <td class='co-table-cell co-table-cell--body'>Наценка на способ оплаты (включена в стоимость)</td>
+        <td class='co-table-cell co-table-cell--body' colspan="2">{{ order.margin }} %</td>
+      </tr>
+      {% endunless %}
+      <tr class='co-table-row co-table-row--foot'>
+        <td class='co-table-cell co-table-cell--foot' colspan="3">
+          <div class='co-order_history-total_title'>Итого:</div>
+          <div class='co-order_history-total_sum co-price'>{{ order.total_price | money }}</div>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
